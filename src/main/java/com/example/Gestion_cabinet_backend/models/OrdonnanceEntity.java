@@ -1,8 +1,10 @@
 package com.example.Gestion_cabinet_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "ordonnances")
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class OrdonnanceEntity implements Serializable {
@@ -18,11 +21,12 @@ public class OrdonnanceEntity implements Serializable {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Integer ID_ordonnance;
+        private Integer id_ordonnance;
 
-        private String Date;
+        private String date;
 
         @OneToOne(mappedBy = "ordonnance",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+        @JsonIgnore
         private RendezvousEntity rendezvous;
 
         @ManyToMany
@@ -31,9 +35,6 @@ public class OrdonnanceEntity implements Serializable {
                 joinColumns = @JoinColumn(name = "ID_ordonnance"),
                 inverseJoinColumns = @JoinColumn(name = "ID_medicament")
         )
+        @JsonIgnore
         private List<MedicamentEntity> medicaments;
-
-
-        // Getters and setters
-
 }
