@@ -49,7 +49,6 @@ public class EventCalendarController {
             return ResponseEntity.ok().body(updated);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-
     @DeleteMapping("/events/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable("id") Integer id) {
         Optional<EventCalendarEntity> eventOptional = eventCalendarRepository.findById(id);

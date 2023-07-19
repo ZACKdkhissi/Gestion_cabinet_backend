@@ -1,5 +1,4 @@
 package com.example.Gestion_cabinet_backend.controllers;
-
 import com.example.Gestion_cabinet_backend.models.MedicamentEntity;
 import com.example.Gestion_cabinet_backend.models.OrdonnanceEntity;
 import com.example.Gestion_cabinet_backend.repository.MedicamentRepository;

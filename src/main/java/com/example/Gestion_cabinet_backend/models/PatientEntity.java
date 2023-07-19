@@ -1,6 +1,6 @@
 package com.example.Gestion_cabinet_backend.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

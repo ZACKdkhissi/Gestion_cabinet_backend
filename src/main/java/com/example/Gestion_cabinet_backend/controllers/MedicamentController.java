@@ -19,6 +19,7 @@ public class MedicamentController {
     @Autowired
     private MedicamentRepository medicamentRepository;
 
+
     @GetMapping("/medicaments")
     public ResponseEntity<List<MedicamentEntity>> getAllMedicaments() {
         List<MedicamentEntity> medicaments = medicamentRepository.findAll();
