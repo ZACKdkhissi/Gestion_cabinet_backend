@@ -3,6 +3,7 @@ package com.example.Gestion_cabinet_backend.models;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -11,49 +12,67 @@ import java.util.List;
 @Entity
 @Table(name = "patients")
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class PatientEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer ID_patient;
+    private Integer id_patient;
 
-    private String Nom;
-    private String Prénom;
-
-    @Column(nullable = true)
-    private String Date_de_naissance;
-
-    private String Sexe;
+    private String nom;
+    private String prenom;
 
     @Column(nullable = true)
-    private String CIN;
+    private String date_de_naissance;
+
+    @Column(nullable = false)
+    private String sexe;
 
     @Column(nullable = true)
-    private String Photo_CIN;
+    private String cin;
 
     @Column(nullable = true)
-    private String Téléphone;
-
-    private int Vérifié;
+    private String photo_cin;
 
     @Column(nullable = true)
-    private String Ville;
+    private String telephone;
 
-    private String Mutuelle;
+    /* @Column(nullable = true)
+    private String email; */
 
-    @Column(nullable = true)
-    private String caractère;
-
-    @Column(nullable = true)
-    private Double Taille;
+    @Column(nullable = false)
+    private int verifie;
 
     @Column(nullable = true)
-    private Double Poids;
+    private String ville;
+
+    @Column(nullable = false)
+    private String mutuelle;
 
     @Column(nullable = true)
-    private Double Glycémie;
+    private String caractere;
+
+    @Column(nullable = true)
+    private Double taille;
+
+    @Column(nullable = true)
+    private Double poids;
+
+    @Column(nullable = true)
+    private Double glycemie;
+
+    //khass nzido list dial sans rendez vous wndiro foreign key f sans rendez vous
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<RendezvousEntity> rendezvous;
+
+    public void updateVerificationStatus() {
+        if (getCin() != null && !getCin().isEmpty() || getTelephone() != null && !getTelephone().isEmpty()) {
+            if (getPhoto_cin() != null && !getPhoto_cin().isEmpty()) {setVerifie(2);return;}
+            setVerifie(1);
+        } else {
+            setVerifie(0);
+        }
+    }
 }
