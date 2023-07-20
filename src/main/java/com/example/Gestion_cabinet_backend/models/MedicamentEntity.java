@@ -20,7 +20,9 @@ public class MedicamentEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_medicament;
 
+    @Column(nullable = false)
     private String nom;
+    @Column(nullable = false)
     private String forme;
 
     @ManyToMany(mappedBy = "medicaments")

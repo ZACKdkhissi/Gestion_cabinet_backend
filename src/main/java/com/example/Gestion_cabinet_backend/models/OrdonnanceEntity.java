@@ -24,6 +24,7 @@ public class OrdonnanceEntity implements Serializable {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id_ordonnance;
 
+        @Column(nullable = false)
         private String date;
 
         @OneToOne(mappedBy = "ordonnance",cascade = CascadeType.ALL,fetch = FetchType.LAZY)

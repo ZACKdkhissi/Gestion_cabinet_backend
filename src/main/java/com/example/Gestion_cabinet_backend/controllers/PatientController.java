@@ -50,23 +50,11 @@ public class PatientController {
             patient.setCin(updatedPatient.getCin());
             patient.setPhoto_cin(updatedPatient.getPhoto_cin());
             patient.setTelephone(updatedPatient.getTelephone());
-            //patient.setEmail(updatedPatient.getEmail());
+            patient.setEmail(updatedPatient.getEmail());
             patient.setVille(updatedPatient.getVille());
             patient.setMutuelle(updatedPatient.getMutuelle());
             patient.setCaractere(updatedPatient.getCaractere());
             patient.updateVerificationStatus();
-            PatientEntity updated = patientRepository.save(patient);
-            return ResponseEntity.ok().body(updated);
-        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @PutMapping("/mesures/{id}")
-    public ResponseEntity<PatientEntity> updateMesures(@PathVariable("id") Integer id, @RequestBody PatientEntity updatedPatient) {
-        Optional<PatientEntity> patientOptional = patientRepository.findById(id);
-        return patientOptional.map(patient -> {
-            patient.setTaille(updatedPatient.getTaille());
-            patient.setPoids(updatedPatient.getPoids());
-            patient.setGlycemie(updatedPatient.getGlycemie());
             PatientEntity updated = patientRepository.save(patient);
             return ResponseEntity.ok().body(updated);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

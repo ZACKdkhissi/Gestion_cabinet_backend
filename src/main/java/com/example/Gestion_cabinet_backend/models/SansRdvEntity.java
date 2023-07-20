@@ -20,16 +20,18 @@ public class SansRdvEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_sans_rdv;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime timestamp;
+    @Column(nullable = false)
+    private String type;
 
-    private String nom;
-    private String prenom;
-    private String type_rdv;
-    private String telephone;
+    @Column(nullable = false)
+    private int statut;
+
+    @ManyToOne
+    @JoinColumn(name = "id_patient")
+    private PatientEntity patient;
 
     @OneToOne
-    @JoinColumn(name = "ID_ordonnance")
+    @JoinColumn(name = "id_ordonnance")
     private OrdonnanceEntity ordonnance;
 
 

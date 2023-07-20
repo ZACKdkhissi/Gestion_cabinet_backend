@@ -44,7 +44,6 @@ public class EventCalendarController {
             event.setFrom_date(updatedEvent.getFrom_date());
             event.setTo_date(updatedEvent.getTo_date());
             event.setTitre(updatedEvent.getTitre());
-            event.setDescription(updatedEvent.getDescription());
             EventCalendarEntity updated = eventCalendarRepository.save(event);
             return ResponseEntity.ok().body(updated);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
