@@ -20,13 +20,20 @@ public class RendezvousEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_rdv;
 
+    @Column(nullable = false)
     private String date;
+
+    @Column(nullable = false)
     private String heure;
+
+    @Column(nullable = false)
     private String type;
+
+    @Column(nullable = false)
     private int statut;
 
     @ManyToOne
-    @JoinColumn(name = "ID_patient")
+    @JoinColumn(name = "id_patient")
     private PatientEntity patient;
 
     @OneToOne()

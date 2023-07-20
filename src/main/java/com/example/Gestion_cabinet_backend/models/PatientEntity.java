@@ -20,7 +20,10 @@ public class PatientEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_patient;
 
+    @Column(nullable = false)
     private String nom;
+
+    @Column(nullable = false)
     private String prenom;
 
     @Column(nullable = true)
@@ -56,8 +59,10 @@ public class PatientEntity implements Serializable {
     @Column(nullable = true)
     private Integer id_parent;
 
-    
-    //khass nzido list dial sans rendez vous wndiro foreign key f sans rendez vous
+
+    @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    List<SansRdvEntity> sans_rendezvous;
+
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<RendezvousEntity> rendezvous;

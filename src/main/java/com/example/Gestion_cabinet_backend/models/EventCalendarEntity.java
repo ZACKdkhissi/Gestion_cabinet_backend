@@ -19,9 +19,11 @@ public class EventCalendarEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Date from_date;
-    private Date to_date;
+    @Column(nullable = false)
+    private String from_date;
+    @Column(nullable = false)
+    private String to_date;
+    @Column(nullable = false)
     private String titre;
-    private String description;
 
 }
