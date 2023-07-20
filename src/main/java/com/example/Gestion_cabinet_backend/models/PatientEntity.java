@@ -38,8 +38,8 @@ public class PatientEntity implements Serializable {
     @Column(nullable = true)
     private String telephone;
 
-    /* @Column(nullable = true)
-    private String email; */
+    @Column(nullable = true)
+    private String email;
 
     @Column(nullable = false)
     private int verifie;
@@ -54,14 +54,9 @@ public class PatientEntity implements Serializable {
     private String caractere;
 
     @Column(nullable = true)
-    private Double taille;
+    private Integer id_parent;
 
-    @Column(nullable = true)
-    private Double poids;
-
-    @Column(nullable = true)
-    private Double glycemie;
-
+    
     //khass nzido list dial sans rendez vous wndiro foreign key f sans rendez vous
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)

@@ -60,7 +60,7 @@ public class PatientController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/mesures/{id}")
+    /*@PutMapping("/mesures/{id}")
     public ResponseEntity<PatientEntity> updateMesures(@PathVariable("id") Integer id, @RequestBody PatientEntity updatedPatient) {
         Optional<PatientEntity> patientOptional = patientRepository.findById(id);
         return patientOptional.map(patient -> {
@@ -70,7 +70,7 @@ public class PatientController {
             PatientEntity updated = patientRepository.save(patient);
             return ResponseEntity.ok().body(updated);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
+    }*/
 
     @DeleteMapping("/patients/{id}")
     public ResponseEntity<String> deletePatient(@PathVariable("id") Integer id) {
