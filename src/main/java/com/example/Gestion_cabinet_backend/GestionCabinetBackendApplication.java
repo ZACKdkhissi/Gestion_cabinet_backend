@@ -24,8 +24,8 @@ public class GestionCabinetBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GestionCabinetBackendApplication.class, args);
 	}
-    /*
-	@PostConstruct
+
+	/*@PostConstruct
 	protected void init() {
 
 		List<Authority> authorityList=new ArrayList<>();
@@ -38,7 +38,7 @@ public class GestionCabinetBackendApplication {
 		user.setUserName("ADMIN");
 
 
-		user.setPassword(passwordEncoder.encode("ADMIN1010"));
+		user.setPassword(passwordEncoder.encode("ADMIN"));
 		user.setEnabled(true);
 		user.setAuthorities(authorityList);
 
@@ -46,12 +46,12 @@ public class GestionCabinetBackendApplication {
 
 
 
-	}*/
+	}
 
 	private Authority createAuthority(String roleCode) {
 		Authority authority=new Authority();
 		authority.setRoleCode(roleCode);
 		return authority;
-	}
+	}*/
 
 }

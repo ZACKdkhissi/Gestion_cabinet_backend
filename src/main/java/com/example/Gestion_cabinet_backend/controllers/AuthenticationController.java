@@ -5,8 +5,7 @@ package com.example.Gestion_cabinet_backend.controllers;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 import com.example.Gestion_cabinet_backend.config.JWTTokenHelper;
@@ -26,12 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
@@ -71,10 +65,10 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user= (User) authentication.getPrincipal();
-        if (!user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ADMIN"))) {
+       /* if (!user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ADMIN"))) {
             // L'utilisateur n'est pas un administrateur, retourner une réponse d'erreur
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        }*/
         String jwtToken=jWTTokenHelper.generateToken(user.getUsername());
 
         LoginResponse response=new LoginResponse();
@@ -87,18 +81,36 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrationRequest registrationRequest) {
         List<Authority> authorityList = new ArrayList<>();
-        authorityList.add(createAuthority(registrationRequest.getRole()));
+        for (String role : registrationRequest.getRoles()) {
+            authorityList.add(createAuthority(role));
+        }
 
         User user = new User();
         user.setUserName(registrationRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         user.setEnabled(true);
         user.setAuthorities(authorityList);
+        user.setEmail(registrationRequest.getEmail());
+
 
         userDetailsRepository.save(user);
 
         return ResponseEntity.ok("User registered successfully.");
     }
+
+    @DeleteMapping("/users/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer userId) {
+        Optional<User> optionalUser = userDetailsRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            userDetailsRepository.delete(user);
+            return ResponseEntity.ok("User deleted successfully.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
 

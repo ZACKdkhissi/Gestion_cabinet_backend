@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Setter
 public class RegistrationRequest {
-    private String role;
+    private List<String> roles;
     private String username;
     private String password;
+    private String email;
 
 
 }
