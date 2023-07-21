@@ -54,6 +54,7 @@ public class PatientController {
             patient.setVille(updatedPatient.getVille());
             patient.setMutuelle(updatedPatient.getMutuelle());
             patient.setCaractere(updatedPatient.getCaractere());
+            patient.setId_parent(updatedPatient.getId_parent());
             patient.updateVerificationStatus();
             PatientEntity updated = patientRepository.save(patient);
             return ResponseEntity.ok().body(updated);
@@ -65,9 +66,9 @@ public class PatientController {
         Optional<PatientEntity> patientOptional = patientRepository.findById(id);
         if (patientOptional.isPresent()) {
             patientRepository.deleteById(id);
-            return ResponseEntity.ok().body("Patient with ID " + id + " has been deleted.");
+            return ResponseEntity.ok().body("Patient avec ID " + id + " est supprimé.");
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found with ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient non trouvé pour ID: " + id);
         }
     }
 }
