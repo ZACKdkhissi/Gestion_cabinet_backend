@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,12 @@ public class PatientEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_patient;
+
+    @Column(nullable = true, unique = true)
+    private Integer code_patient;
+
+    @Column(nullable = false)
+    private String type_patient;
 
     @Column(nullable = false)
     private String nom;
@@ -66,6 +73,9 @@ public class PatientEntity implements Serializable {
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<RendezvousEntity> rendezvous;
+
+    @Column(nullable = false)
+    private LocalDateTime created_at = LocalDateTime.now();
 
     public void updateVerificationStatus() {
         if (getCin() != null && !getCin().isEmpty() || getTelephone() != null && !getTelephone().isEmpty()) {

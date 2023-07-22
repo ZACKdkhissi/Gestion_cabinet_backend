@@ -30,13 +30,14 @@ public class RendezvousEntity implements Serializable {
     private String type;
 
     @Column(nullable = false)
-    private int statut;
+    private int statut = 0;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_patient")
     private PatientEntity patient;
 
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="id_ordonnance")
     private OrdonnanceEntity ordonnance;
+
 }

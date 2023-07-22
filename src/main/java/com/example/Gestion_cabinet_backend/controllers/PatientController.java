@@ -2,6 +2,7 @@ package com.example.Gestion_cabinet_backend.controllers;
 
 import com.example.Gestion_cabinet_backend.models.PatientEntity;
 import com.example.Gestion_cabinet_backend.repository.PatientRepository;
+import com.example.Gestion_cabinet_backend.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,14 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PatientController {
     @Autowired
-    private PatientRepository patientRepository;
+    private final PatientRepository patientRepository;
+    private final PatientService patientService;
+
+    @Autowired
+    public PatientController(PatientRepository patientRepository, PatientService patientService) {
+        this.patientRepository = patientRepository;
+        this.patientService = patientService;
+    }
 
     @GetMapping("/patients")
     public ResponseEntity<List<PatientEntity>> getAllPatients() {
@@ -34,6 +42,7 @@ public class PatientController {
 
     @PostMapping("/patients")
     public ResponseEntity<PatientEntity> createPatient(@RequestBody PatientEntity patient) {
+        patientService.setCodePatient(patient);
         patient.updateVerificationStatus();
         PatientEntity createdPatient = patientRepository.save(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
@@ -48,12 +57,15 @@ public class PatientController {
             patient.setDate_de_naissance(updatedPatient.getDate_de_naissance());
             patient.setSexe(updatedPatient.getSexe());
             patient.setCin(updatedPatient.getCin());
+            patient.setType_patient(updatedPatient.getType_patient());
             patient.setPhoto_cin(updatedPatient.getPhoto_cin());
             patient.setTelephone(updatedPatient.getTelephone());
             patient.setEmail(updatedPatient.getEmail());
             patient.setVille(updatedPatient.getVille());
             patient.setMutuelle(updatedPatient.getMutuelle());
             patient.setCaractere(updatedPatient.getCaractere());
+            patient.setId_parent(updatedPatient.getId_parent());
+            patientService.setCodePatient(patient);
             patient.updateVerificationStatus();
             PatientEntity updated = patientRepository.save(patient);
             return ResponseEntity.ok().body(updated);
@@ -68,9 +80,9 @@ public class PatientController {
         Optional<PatientEntity> patientOptional = patientRepository.findById(id);
         if (patientOptional.isPresent()) {
             patientRepository.deleteById(id);
-            return ResponseEntity.ok().body("Patient with ID " + id + " has been deleted.");
+            return ResponseEntity.ok().body("Patient avec ID " + id + " est supprimé.");
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found with ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient non trouvé pour ID: " + id);
         }
     }
 }
