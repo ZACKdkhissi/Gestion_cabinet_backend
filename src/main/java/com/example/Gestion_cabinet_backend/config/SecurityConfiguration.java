@@ -60,6 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         request.antMatchers("/api/v1/register").hasAuthority("ADMIN")
                                 .antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
                                 .antMatchers("/api/v1/auth/login").permitAll()
+
                                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(new JWTAuthenticationFilter(userService, jWTTokenHelper),
