@@ -1,8 +1,12 @@
 package com.example.Gestion_cabinet_backend.controllers;
 import com.example.Gestion_cabinet_backend.models.MedicamentEntity;
 import com.example.Gestion_cabinet_backend.models.OrdonnanceEntity;
+import com.example.Gestion_cabinet_backend.models.RendezvousEntity;
+import com.example.Gestion_cabinet_backend.models.SansRdvEntity;
 import com.example.Gestion_cabinet_backend.repository.MedicamentRepository;
 import com.example.Gestion_cabinet_backend.repository.OrdonnanceRepository;
+import com.example.Gestion_cabinet_backend.repository.RendezvousRepository;
+import com.example.Gestion_cabinet_backend.repository.SanRdvRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,10 @@ public class OrdonnanceController {
     private OrdonnanceRepository ordonnanceRepository;
     @Autowired
     private MedicamentRepository medicamentRepository;
+    @Autowired
+    private RendezvousRepository rendezvousRepository;
+    @Autowired
+    private SanRdvRepository sanRdvRepository;
 
     @GetMapping("/ordonnances")
     public ResponseEntity<List<OrdonnanceEntity>> getAllOrdonnances() {
@@ -36,6 +44,13 @@ public class OrdonnanceController {
 
     @PostMapping("/ordonnances")
     public ResponseEntity<String> createOrdonnance(@RequestBody OrdonnanceEntity ordonnanceEntity) {
+        RendezvousEntity rendezvous = ordonnanceEntity.getRendezvous();
+        SansRdvEntity sansrdv = ordonnanceEntity.getSansrdv();
+
+        if (rendezvous == null && sansrdv == null) {
+            return ResponseEntity.badRequest().body("Either rendezvous or sansrdv field must be filled");
+        }
+
         List<MedicamentEntity> medicaments = ordonnanceEntity.getMedicaments();
         for (MedicamentEntity medicament : medicaments) {
             Optional<MedicamentEntity> medicamentOptional = medicamentRepository.findById(medicament.getId_medicament());
@@ -43,6 +58,18 @@ public class OrdonnanceController {
             if (medicamentOptional.isEmpty()) {
                 return ResponseEntity.badRequest().body("One or more medicaments not found");
             }
+        }
+
+        if (rendezvous != null) {
+            RendezvousEntity existingRendezvous = rendezvousRepository.findById(rendezvous.getId_rdv())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rendezvous not found"));
+            ordonnanceEntity.setRendezvous(existingRendezvous);
+        }
+
+        if (sansrdv != null) {
+            SansRdvEntity existingSansRdv = sanRdvRepository.findById(sansrdv.getId_sans_rdv())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SansRdv not found"));
+            ordonnanceEntity.setSansrdv(existingSansRdv);
         }
         ordonnanceRepository.save(ordonnanceEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body("Ordonnance created successfully");

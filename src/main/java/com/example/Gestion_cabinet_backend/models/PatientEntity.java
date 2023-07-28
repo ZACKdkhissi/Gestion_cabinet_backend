@@ -42,7 +42,7 @@ public class PatientEntity implements Serializable {
     @Column(nullable = true)
     private String cin;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 100000)
     private String photo_cin;
 
     @Column(nullable = true)

@@ -1,6 +1,9 @@
 package com.example.Gestion_cabinet_backend.models;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,12 +35,12 @@ public class RendezvousEntity implements Serializable {
     @Column(nullable = false)
     private int statut = 0;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_patient")
     private PatientEntity patient;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="id_ordonnance")
+    @OneToOne(mappedBy = "rendezvous", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private OrdonnanceEntity ordonnance;
 
 }

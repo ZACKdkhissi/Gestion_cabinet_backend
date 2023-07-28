@@ -27,8 +27,12 @@ public class OrdonnanceEntity implements Serializable {
         @Column(nullable = false)
         private String date;
 
-        @OneToOne(mappedBy = "ordonnance",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-        @JsonIgnore
+        @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        @JoinColumn(name = "id_rendezvous")
+        private SansRdvEntity sansrdv;
+
+        @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        @JoinColumn(name = "id_sansrdv")
         private RendezvousEntity rendezvous;
 
         @ManyToMany

@@ -1,6 +1,8 @@
 package com.example.Gestion_cabinet_backend.controllers;
 
+import com.example.Gestion_cabinet_backend.models.PatientEntity;
 import com.example.Gestion_cabinet_backend.models.SansRdvEntity;
+import com.example.Gestion_cabinet_backend.repository.PatientRepository;
 import com.example.Gestion_cabinet_backend.repository.SanRdvRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ public class SansRdvController {
 
     @Autowired
     private SanRdvRepository sanRdvRepository;
+    @Autowired
+    private PatientRepository patientRepository;
 
     @GetMapping("/sansrdv")
     public List<SansRdvEntity> getAllSansRdvs() {
@@ -32,6 +36,10 @@ public class SansRdvController {
 
     @PostMapping("/sansrdv")
     public ResponseEntity<SansRdvEntity> createSansRdv(@RequestBody SansRdvEntity sansRdv) {
+        Optional<PatientEntity> patientOptional = patientRepository.findById(sansRdv.getPatient().getId_patient());
+        if (patientOptional.isPresent()) {
+            sansRdv.setPatient(patientOptional.get());
+        }
         SansRdvEntity createdSansRdv = sanRdvRepository.save(sansRdv);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSansRdv);
     }
