@@ -29,10 +29,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "USER_NAME", unique = true)
+    @Column(name = "USER_NAME", unique = true, nullable = false)
     private String userName;
 
-    @Column(name = "USER_KEY")
+    @Column(name = "USER_KEY", nullable = false)
     private String password;
 
 

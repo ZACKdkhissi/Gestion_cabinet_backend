@@ -66,8 +66,10 @@ public class PatientEntity implements Serializable {
     @Column(nullable = true)
     private Integer id_parent;
 
+
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<SansRdvEntity> sans_rendezvous;
+
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<RendezvousEntity> rendezvous;

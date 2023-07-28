@@ -72,6 +72,9 @@ public class PatientController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+
+
+
     @DeleteMapping("/patients/{id}")
     public ResponseEntity<String> deletePatient(@PathVariable("id") Integer id) {
         Optional<PatientEntity> patientOptional = patientRepository.findById(id);

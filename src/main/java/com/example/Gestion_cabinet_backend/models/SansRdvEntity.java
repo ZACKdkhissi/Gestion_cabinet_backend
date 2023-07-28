@@ -23,6 +23,7 @@ public class SansRdvEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_sans_rdv;
 
+
     @Column(nullable = false)
     private String type;
 
