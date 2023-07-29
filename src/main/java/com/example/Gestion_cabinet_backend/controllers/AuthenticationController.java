@@ -77,6 +77,28 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers() {
+        List<User> userList = userDetailsRepository.findAll();
+
+
+        List<Map<String, Object>> usersData = new ArrayList<>();
+
+        for (User user : userList) {
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("username", user.getUsername());
+            userData.put("email", user.getEmail());
+            usersData.add(userData);
+        }
+
+        return ResponseEntity.ok(usersData);
+    }
+
+
+
+
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrationRequest registrationRequest) {
