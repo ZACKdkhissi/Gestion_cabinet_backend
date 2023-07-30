@@ -1,8 +1,10 @@
 package com.example.Gestion_cabinet_backend.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
+
 import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,10 +31,12 @@ public class OrdonnanceEntity implements Serializable {
 
         @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
         @JoinColumn(name = "id_rendezvous")
+        @JsonIgnoreProperties("ordonnance")
         private SansRdvEntity sansrdv;
 
         @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
         @JoinColumn(name = "id_sansrdv")
+        @JsonIgnoreProperties("ordonnance")
         private RendezvousEntity rendezvous;
 
         @ManyToMany

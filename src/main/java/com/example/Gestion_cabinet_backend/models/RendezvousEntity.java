@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,11 +38,12 @@ public class RendezvousEntity implements Serializable {
     private int statut = 0;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnoreProperties("rendezvous")
     @JoinColumn(name = "id_patient")
     private PatientEntity patient;
 
     @OneToOne(mappedBy = "rendezvous", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("ordonnance")
     private OrdonnanceEntity ordonnance;
 
 }
