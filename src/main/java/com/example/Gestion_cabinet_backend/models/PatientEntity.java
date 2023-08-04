@@ -2,6 +2,9 @@ package com.example.Gestion_cabinet_backend.models;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,8 +47,9 @@ public class PatientEntity implements Serializable {
     @Column(nullable = true)
     private String cin;
 
-    @Column(nullable = true, length = 100000)
-    private String photo_cin;
+    @Lob
+    @Column(nullable = true ,columnDefinition = "LONGBLOB")
+    private byte[] photo_cin;
 
     @Column(nullable = true)
     private String telephone;
@@ -70,11 +74,11 @@ public class PatientEntity implements Serializable {
 
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("patient")
     List<SansRdvEntity> sans_rendezvous;
 
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    //zdt hadi     @JsonIgnore
     @JsonIgnore
     List<RendezvousEntity> rendezvous;
 
@@ -82,9 +86,14 @@ public class PatientEntity implements Serializable {
     private LocalDateTime created_at = LocalDateTime.now();
 
     public void updateVerificationStatus() {
-        if (getCin() != null && !getCin().isEmpty() || getTelephone() != null && !getTelephone().isEmpty()) {
-            if (getPhoto_cin() != null && !getPhoto_cin().isEmpty()) {setVerifie(2);return;}
-            setVerifie(1);
+        boolean hasCinOrTelephone = (getCin() != null && !getCin().isEmpty()) || (getTelephone() != null && !getTelephone().isEmpty());
+
+        if (hasCinOrTelephone) {
+            if (getPhoto_cin() != null && getPhoto_cin().length > 0) {
+                setVerifie(2);
+            } else {
+                setVerifie(1);
+            }
         } else {
             setVerifie(0);
         }
