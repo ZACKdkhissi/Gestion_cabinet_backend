@@ -46,6 +46,7 @@ public class RendezvousController {
         }
         else{
             PatientEntity newPatient = new PatientEntity();
+            newPatient.setId_patient(rendezvous.getPatient().getId_patient());
             newPatient.setNom(rendezvous.getPatient().getNom());
             newPatient.setPrenom(rendezvous.getPatient().getPrenom());
             newPatient.setDate_de_naissance(rendezvous.getPatient().getDate_de_naissance());
@@ -93,6 +94,12 @@ public class RendezvousController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/rendezvous/date/{date}")
+    public ResponseEntity<List<RendezvousEntity>> getRendezvousByDate(@PathVariable("date") String date) {
+        List<RendezvousEntity> rendezvousList = rendezvousRepository.findByDate(date);
+        return ResponseEntity.ok(rendezvousList);
     }
 }
 
