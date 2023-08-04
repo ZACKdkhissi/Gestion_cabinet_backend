@@ -36,7 +36,7 @@ public class RendezvousEntity implements Serializable {
     private int statut = 0;
 
     @ManyToOne
-    @JsonBackReference
+    //@JsonBackReference
     @JoinColumn(name = "id_patient")
     private PatientEntity patient;
 

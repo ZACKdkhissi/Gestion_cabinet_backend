@@ -5,6 +5,7 @@ import com.example.Gestion_cabinet_backend.models.RendezvousEntity;
 import com.example.Gestion_cabinet_backend.repository.EventCalendarRepository;
 import com.example.Gestion_cabinet_backend.repository.PatientRepository;
 import com.example.Gestion_cabinet_backend.repository.RendezvousRepository;
+import com.example.Gestion_cabinet_backend.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ public class RendezvousController {
     private RendezvousRepository rendezvousRepository;
     @Autowired
     private PatientRepository patientRepository;
+    @Autowired
+    private PatientService patientService;
 
     @GetMapping("/rendezvous")
     public ResponseEntity<List<RendezvousEntity>> getAllRendezvous() {
@@ -40,6 +43,27 @@ public class RendezvousController {
         Optional<PatientEntity> patientOptional = patientRepository.findById(rendezvous.getPatient().getId_patient());
         if (patientOptional.isPresent()) {
             rendezvous.setPatient(patientOptional.get());
+        }
+        else{
+            PatientEntity newPatient = new PatientEntity();
+            newPatient.setId_patient(rendezvous.getPatient().getId_patient());
+            newPatient.setNom(rendezvous.getPatient().getNom());
+            newPatient.setPrenom(rendezvous.getPatient().getPrenom());
+            newPatient.setDate_de_naissance(rendezvous.getPatient().getDate_de_naissance());
+            newPatient.setSexe(rendezvous.getPatient().getSexe());
+            newPatient.setCin(rendezvous.getPatient().getCin());
+            newPatient.setType_patient(rendezvous.getPatient().getType_patient());
+            newPatient.setPhoto_cin(rendezvous.getPatient().getPhoto_cin());
+            newPatient.setTelephone(rendezvous.getPatient().getTelephone());
+            newPatient.setEmail(rendezvous.getPatient().getEmail());
+            newPatient.setVille(rendezvous.getPatient().getVille());
+            newPatient.setMutuelle(rendezvous.getPatient().getMutuelle());
+            newPatient.setCaractere(rendezvous.getPatient().getCaractere());
+            newPatient.setId_parent(rendezvous.getPatient().getId_parent());
+            patientService.setCodePatient(newPatient);
+            newPatient.updateVerificationStatus();
+            PatientEntity createdPatient = patientRepository.save(newPatient);
+            rendezvous.setPatient(createdPatient);
         }
 
         RendezvousEntity savedRendezvous = rendezvousRepository.save(rendezvous);
@@ -70,6 +94,12 @@ public class RendezvousController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/rendezvous/date/{date}")
+    public ResponseEntity<List<RendezvousEntity>> getRendezvousByDate(@PathVariable("date") String date) {
+        List<RendezvousEntity> rendezvousList = rendezvousRepository.findByDate(date);
+        return ResponseEntity.ok(rendezvousList);
     }
 }
 

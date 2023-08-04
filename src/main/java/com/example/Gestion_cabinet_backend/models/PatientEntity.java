@@ -1,6 +1,8 @@
 package com.example.Gestion_cabinet_backend.models;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,6 +74,8 @@ public class PatientEntity implements Serializable {
 
 
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    //zdt hadi     @JsonIgnore
+    @JsonIgnore
     List<RendezvousEntity> rendezvous;
 
     @Column(nullable = false)
