@@ -18,8 +18,10 @@ public class PatientService {
         if ("provisoire".equalsIgnoreCase(patientEntity.getType_patient())) {
             patientEntity.setCode_patient(null);
         } else if ("officiel".equalsIgnoreCase(patientEntity.getType_patient())) {
-            Integer lastCode = patientRepository.findMaxCodePatient();
-            patientEntity.setCode_patient(lastCode != null ? lastCode + 1 : 1);
+            if (patientEntity.getCode_patient() == null) {
+                Integer lastCode = patientRepository.findMaxCodePatient();
+                patientEntity.setCode_patient(lastCode != null ? lastCode + 1 : 1);
+            }
         }
     }
 }

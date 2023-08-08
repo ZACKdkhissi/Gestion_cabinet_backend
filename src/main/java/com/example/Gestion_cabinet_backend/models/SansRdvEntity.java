@@ -32,6 +32,9 @@ public class SansRdvEntity implements Serializable {
     @Column(nullable = false)
     private int statut = 0;
 
+    @Column(nullable = false)
+    private String date;
+
     @ManyToOne
     @JsonIgnoreProperties("sans_rendezvous")
     @JoinColumn(name = "id_patient")
