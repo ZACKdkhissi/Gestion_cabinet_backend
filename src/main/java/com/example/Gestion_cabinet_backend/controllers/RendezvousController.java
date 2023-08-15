@@ -101,5 +101,12 @@ public class RendezvousController {
         List<RendezvousEntity> rendezvousList = rendezvousRepository.findByDate(date);
         return ResponseEntity.ok(rendezvousList);
     }
+
+    @GetMapping("/rendezvous/date/count/{date}")
+    public Integer getCountRendezVous(@PathVariable("date") String date){
+        List<RendezvousEntity> rendezvousList = rendezvousRepository.findByDate(date);
+        return 22-rendezvousList.size();
+    }
+
 }
 
