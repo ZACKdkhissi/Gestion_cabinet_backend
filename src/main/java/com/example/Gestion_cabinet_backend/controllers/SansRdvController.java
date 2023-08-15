@@ -49,6 +49,8 @@ public class SansRdvController {
         return sanRdvRepository.findById(id)
                 .map(sansRdv -> {
                     sansRdv.setType(updatedSansRdv.getType());
+                    sansRdv.setDate(updatedSansRdv.getDate());
+                    sansRdv.setStatut(updatedSansRdv.getStatut());
                     sansRdv.setPatient(updatedSansRdv.getPatient());
                     sansRdv.setOrdonnance(updatedSansRdv.getOrdonnance());
                     SansRdvEntity updated = sanRdvRepository.save(sansRdv);
