@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MedicamentRepository extends JpaRepository<MedicamentEntity,Integer> {
+    boolean existsByNomAndForme(String nom, String forme);
+
 }

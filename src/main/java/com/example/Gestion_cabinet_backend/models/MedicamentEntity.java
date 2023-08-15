@@ -22,10 +22,25 @@ public class MedicamentEntity implements Serializable {
 
     @Column(nullable = false)
     private String nom;
-    @Column(nullable = false)
+
+    @Column(nullable = true)
     private String forme;
 
-    @ManyToMany(mappedBy = "medicaments")
-    @JsonIgnore
-    private List<OrdonnanceEntity> ordonnances;
+    @Column(nullable = true)
+    private String substance ;
+
+    @Column(nullable = true)
+    private String prix ;
+
+    @Column(nullable = true)
+    private String laboratoire ;
+
+    @Column(nullable = true)
+    private String type;
+
+
+
+
+    @OneToMany(mappedBy = "medicament", cascade = CascadeType.ALL)
+    private List<OrdonnanceMedicament> ordonnanceMedicaments;
 }

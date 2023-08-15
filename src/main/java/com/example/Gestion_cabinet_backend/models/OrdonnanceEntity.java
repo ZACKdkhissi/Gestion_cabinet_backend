@@ -30,21 +30,15 @@ public class OrdonnanceEntity implements Serializable {
         private String date;
 
         @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        @JoinColumn(name = "id_rendezvous")
+        @JoinColumn(name = "id_sansrdv")
         @JsonIgnoreProperties("ordonnance")
         private SansRdvEntity sansrdv;
 
         @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        @JoinColumn(name = "id_sansrdv")
+        @JoinColumn(name = "id_rendezvous")
         @JsonIgnoreProperties("ordonnance")
         private RendezvousEntity rendezvous;
 
-        @ManyToMany
-        @JoinTable(
-                name = "ordonnance_medicament",
-                joinColumns = @JoinColumn(name = "ID_ordonnance"),
-                inverseJoinColumns = @JoinColumn(name = "ID_medicament")
-        )
-        @JsonIgnore
-        private List<MedicamentEntity> medicaments;
+        @OneToMany(mappedBy = "ordonnance", cascade = CascadeType.ALL)
+        private List<OrdonnanceMedicament> ordonnanceMedicaments;
 }

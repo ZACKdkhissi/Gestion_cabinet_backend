@@ -1,8 +1,5 @@
 package com.example.Gestion_cabinet_backend.controllers;
-import com.example.Gestion_cabinet_backend.models.MedicamentEntity;
-import com.example.Gestion_cabinet_backend.models.OrdonnanceEntity;
-import com.example.Gestion_cabinet_backend.models.RendezvousEntity;
-import com.example.Gestion_cabinet_backend.models.SansRdvEntity;
+import com.example.Gestion_cabinet_backend.models.*;
 import com.example.Gestion_cabinet_backend.repository.MedicamentRepository;
 import com.example.Gestion_cabinet_backend.repository.OrdonnanceRepository;
 import com.example.Gestion_cabinet_backend.repository.RendezvousRepository;
@@ -20,14 +17,20 @@ import java.util.Optional;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:3000")
 public class OrdonnanceController {
+
     @Autowired
     private OrdonnanceRepository ordonnanceRepository;
+
     @Autowired
     private MedicamentRepository medicamentRepository;
+
     @Autowired
     private RendezvousRepository rendezvousRepository;
+
     @Autowired
     private SanRdvRepository sanRdvRepository;
+
+
 
     @GetMapping("/ordonnances")
     public ResponseEntity<List<OrdonnanceEntity>> getAllOrdonnances() {
@@ -43,66 +46,57 @@ public class OrdonnanceController {
     }
 
     @PostMapping("/ordonnances")
-    public ResponseEntity<String> createOrdonnance(@RequestBody OrdonnanceEntity ordonnanceEntity) {
-        RendezvousEntity rendezvous = ordonnanceEntity.getRendezvous();
-        SansRdvEntity sansrdv = ordonnanceEntity.getSansrdv();
-
-        if (rendezvous == null && sansrdv == null) {
-            return ResponseEntity.badRequest().body("Either rendezvous or sansrdv field must be filled");
-        }
-
-        List<MedicamentEntity> medicaments = ordonnanceEntity.getMedicaments();
-        for (MedicamentEntity medicament : medicaments) {
-            Optional<MedicamentEntity> medicamentOptional = medicamentRepository.findById(medicament.getId_medicament());
-
-            if (medicamentOptional.isEmpty()) {
-                return ResponseEntity.badRequest().body("One or more medicaments not found");
-            }
-        }
-
-        if (rendezvous != null) {
-            RendezvousEntity existingRendezvous = rendezvousRepository.findById(rendezvous.getId_rdv())
+    public ResponseEntity<OrdonnanceEntity> createOrdonnance(@RequestBody OrdonnanceEntity ordonnance) {
+        if (ordonnance.getRendezvous() != null) {
+            RendezvousEntity attachedRendezvous = rendezvousRepository.findById(ordonnance.getRendezvous().getId_rdv())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rendezvous not found"));
-            ordonnanceEntity.setRendezvous(existingRendezvous);
+            ordonnance.setRendezvous(attachedRendezvous);
+        } else if (ordonnance.getSansrdv() != null) {
+            SansRdvEntity attachedSansRdv = sanRdvRepository.findById(ordonnance.getSansrdv().getId_sans_rdv())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SansRdv not found"));
+            ordonnance.setSansrdv(attachedSansRdv);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ordonnance must be associated with either a rendez-vous or a sans-rendez-vous");
         }
 
-        if (sansrdv != null) {
-            SansRdvEntity existingSansRdv = sanRdvRepository.findById(sansrdv.getId_sans_rdv())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SansRdv not found"));
-            ordonnanceEntity.setSansrdv(existingSansRdv);
+        for (OrdonnanceMedicament medicament : ordonnance.getOrdonnanceMedicaments()) {
+            MedicamentEntity attachedMedicament = medicamentRepository.findById(medicament.getMedicament().getId_medicament())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Medicament not found"));
+
+            medicament.setMedicament(attachedMedicament);
+            medicament.setOrdonnance(ordonnance);
         }
-        ordonnanceRepository.save(ordonnanceEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Ordonnance created successfully");
+
+        OrdonnanceEntity createdOrdonnance = ordonnanceRepository.save(ordonnance);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrdonnance);
     }
 
     @PutMapping("/ordonnances/{id}")
     public ResponseEntity<OrdonnanceEntity> updateOrdonnance(@PathVariable("id") Integer id, @RequestBody OrdonnanceEntity updatedOrdonnance) {
-        OrdonnanceEntity ordonnance = ordonnanceRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Optional<OrdonnanceEntity> ordonnanceOptional = ordonnanceRepository.findById(id);
 
-        ordonnance.setDate(updatedOrdonnance.getDate());
-        ordonnance.setMedicaments(updatedOrdonnance.getMedicaments());
-        ordonnanceRepository.save(ordonnance);
+        if (ordonnanceOptional.isPresent()) {
+            OrdonnanceEntity existingOrdonnance = ordonnanceOptional.get();
+            // Mettez à jour les propriétés de l'ordonnance existante ici
 
-        return ResponseEntity.ok(ordonnance);
+            OrdonnanceEntity updated = ordonnanceRepository.save(existingOrdonnance);
+            return ResponseEntity.ok().body(updated);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ordonnance not found with ID: " + id);
+        }
     }
-
 
     @DeleteMapping("/ordonnances/{id}")
     public ResponseEntity<String> deleteOrdonnance(@PathVariable("id") Integer id) {
         Optional<OrdonnanceEntity> ordonnanceOptional = ordonnanceRepository.findById(id);
-        if (ordonnanceOptional.isPresent()) {
-            OrdonnanceEntity existingOrdonnance = ordonnanceOptional.get();
-            List<MedicamentEntity> medicaments = existingOrdonnance.getMedicaments();
-            if (medicaments.isEmpty()) {
-                ordonnanceRepository.deleteById(id);
-                return ResponseEntity.ok("Ordonnance with ID " + id + " has been deleted.");
-            } else {
-                return ResponseEntity.badRequest().body("Cannot delete the ordonnance with ID " + id + " as it is associated with medicaments.");
-            }
-        } else {
-            return ResponseEntity.badRequest().body("Ordonnance not found with ID: " + id);
-        }
 
+        if (ordonnanceOptional.isPresent()) {
+            ordonnanceRepository.deleteById(id);
+            return ResponseEntity.ok().body("Ordonnance with ID " + id + " has been deleted.");
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ordonnance not found with ID: " + id);
+        }
     }
+
 }

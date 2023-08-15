@@ -34,36 +34,51 @@ public class MedicamentController {
     }
 
     @PostMapping("/medicaments")
-    public ResponseEntity<MedicamentEntity> createMedicament(@RequestBody MedicamentEntity medicament) {
+    public ResponseEntity<?> createMedicament(@RequestBody MedicamentEntity medicament) {
+        if (medicament.getNom() == null || medicament.getNom().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("insérer le nom!!.");
+        }
+
+        boolean exists = medicamentRepository.existsByNomAndForme(medicament.getNom(), medicament.getForme());
+        if (exists) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("deja inserer dans la base de données.");
+        }
+
         MedicamentEntity createdMedicament = medicamentRepository.save(medicament);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMedicament);
     }
 
+
     @PutMapping("/medicaments/{id}")
     public ResponseEntity<MedicamentEntity> updateMedicament(@PathVariable("id") Integer id, @RequestBody MedicamentEntity updatedMedicament) {
         Optional<MedicamentEntity> medicamentOptional = medicamentRepository.findById(id);
-        return medicamentOptional.map(medicament -> {
-            medicament.setNom(updatedMedicament.getNom());
-            medicament.setForme(updatedMedicament.getForme());
-            MedicamentEntity updated = medicamentRepository.save(medicament);
-            return ResponseEntity.ok().body(updated);
-        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
 
-    @DeleteMapping("/medicaments/{id}")
-    public ResponseEntity<String> deleteMedicament(@PathVariable("id") Integer id) {
-        Optional<MedicamentEntity> medicamentOptional = medicamentRepository.findById(id);
         if (medicamentOptional.isPresent()) {
             MedicamentEntity existingMedicament = medicamentOptional.get();
-            List<OrdonnanceEntity> ordonnances = existingMedicament.getOrdonnances();
-            if (ordonnances.isEmpty()) {
-                medicamentRepository.deleteById(id);
-                return ResponseEntity.ok().body("Medicament with ID " + id + " has been deleted.");
-            } else {
-                return ResponseEntity.badRequest().body("Cannot delete the medicament with ID " + id + " as it is associated with ordonnances.");
-            }
+
+            existingMedicament.setNom(updatedMedicament.getNom());
+            existingMedicament.setForme(updatedMedicament.getForme());
+
+            MedicamentEntity updated = medicamentRepository.save(existingMedicament);
+            return ResponseEntity.ok().body(updated);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Medicament not found with ID: " + id);
         }
     }
+
+
+
+    @DeleteMapping("/medicaments/{id}")
+    public ResponseEntity<String> deleteMedicament(@PathVariable("id") Integer id) {
+        Optional<MedicamentEntity> medicamentOptional = medicamentRepository.findById(id);
+
+        if (medicamentOptional.isPresent()) {
+            medicamentRepository.deleteById(id);
+            return ResponseEntity.ok().body("Medicament with ID " + id + " has been deleted.");
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Medicament not found with ID: " + id);
+        }
+    }
+
+
 }
