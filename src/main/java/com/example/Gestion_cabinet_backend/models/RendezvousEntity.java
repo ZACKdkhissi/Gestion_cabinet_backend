@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "rendezvous")
@@ -36,6 +38,8 @@ public class RendezvousEntity implements Serializable {
 
     @Column(nullable = false)
     private int statut = 0;
+
+
 
     @ManyToOne
     @JoinColumn(name = "id_patient")

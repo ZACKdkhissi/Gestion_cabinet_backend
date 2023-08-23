@@ -11,6 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +75,9 @@ public class RendezvousController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRendezvous);
     }
 
+
+
+
     @PutMapping("/rendezvous/{id}")
     public ResponseEntity<RendezvousEntity> updateRendezvous(@PathVariable("id") Integer id, @RequestBody RendezvousEntity updatedRendezvous) {
         return rendezvousRepository.findById(id)
@@ -79,6 +87,7 @@ public class RendezvousController {
                     rendezvous.setType(updatedRendezvous.getType());
                     rendezvous.setPatient(updatedRendezvous.getPatient());
                     rendezvous.setOrdonnance(updatedRendezvous.getOrdonnance());
+                    rendezvous.setStatut(updatedRendezvous.getStatut());
                     RendezvousEntity updated = rendezvousRepository.save(rendezvous);
                     return ResponseEntity.ok(updated);
                 })
@@ -107,5 +116,33 @@ public class RendezvousController {
         List<RendezvousEntity> rendezvousList = rendezvousRepository.findByDate(date);
         return 22-rendezvousList.size();
     }
+
+    @GetMapping("/rendezvous/count/{patientId}")
+    public ResponseEntity<Integer> getAppointmentCountForPatient(@PathVariable("patientId") Integer patientId) {
+        Optional<PatientEntity> patientOptional = patientRepository.findById(patientId);
+
+        if (patientOptional.isPresent()) {
+            List<RendezvousEntity> rendezvousList = rendezvousRepository.findAll();
+            int appointmentCount = 0;
+
+            for (RendezvousEntity rendezvous : rendezvousList) {
+                if ((rendezvous.getPatient().getId_patient() == patientId) && (rendezvous.getStatut() == 0) ) {
+                    appointmentCount++;
+                }
+            }
+
+            return ResponseEntity.ok(appointmentCount);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+
+
+
+
+
 
 }
