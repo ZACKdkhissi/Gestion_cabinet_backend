@@ -21,6 +21,7 @@ public class OrdonnanceMedicament implements Serializable {
 
     private String posologie;
     private String quand;
+    private String pendant;
 
     @ManyToOne()
     @JoinColumn(name = "ordonnance_id")
