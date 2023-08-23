@@ -22,12 +22,12 @@ public class OrdonnanceMedicament implements Serializable {
     private String posologie;
     private String quand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "ordonnance_id")
     @JsonIgnoreProperties("ordonnanceMedicaments")
     private OrdonnanceEntity ordonnance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "medicament_id")
     @JsonIgnoreProperties("ordonnanceMedicaments")
     private MedicamentEntity medicament;
