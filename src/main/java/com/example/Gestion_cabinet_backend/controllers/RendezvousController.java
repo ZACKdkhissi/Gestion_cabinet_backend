@@ -57,7 +57,7 @@ public class RendezvousController {
             newPatient.setDate_de_naissance(rendezvous.getPatient().getDate_de_naissance());
             newPatient.setSexe(rendezvous.getPatient().getSexe());
             newPatient.setCin(rendezvous.getPatient().getCin());
-            newPatient.setType_patient(rendezvous.getPatient().getType_patient());
+            newPatient.setCode_patient(newPatient.getCode_patient());
             newPatient.setPhoto_cin(rendezvous.getPatient().getPhoto_cin());
             newPatient.setTelephone(rendezvous.getPatient().getTelephone());
             newPatient.setEmail(rendezvous.getPatient().getEmail());
@@ -65,7 +65,7 @@ public class RendezvousController {
             newPatient.setMutuelle(rendezvous.getPatient().getMutuelle());
             newPatient.setCaractere(rendezvous.getPatient().getCaractere());
             newPatient.setId_parent(rendezvous.getPatient().getId_parent());
-            patientService.setCodePatient(newPatient);
+            patientService.setTypePatient(newPatient);
             newPatient.updateVerificationStatus();
             PatientEntity createdPatient = patientRepository.save(newPatient);
             rendezvous.setPatient(createdPatient);

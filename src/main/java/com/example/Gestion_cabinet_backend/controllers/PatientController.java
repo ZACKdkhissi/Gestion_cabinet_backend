@@ -42,7 +42,7 @@ public class PatientController {
 
     @PostMapping("/patients")
     public ResponseEntity<PatientEntity> createPatient(@RequestBody PatientEntity patient) {
-        patientService.setCodePatient(patient);
+        patientService.setTypePatient(patient);
         patient.updateVerificationStatus();
         PatientEntity createdPatient = patientRepository.save(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
@@ -57,7 +57,7 @@ public class PatientController {
             patient.setDate_de_naissance(updatedPatient.getDate_de_naissance());
             patient.setSexe(updatedPatient.getSexe());
             patient.setCin(updatedPatient.getCin());
-            patient.setType_patient(updatedPatient.getType_patient());
+            patient.setCode_patient(updatedPatient.getCode_patient());
             patient.setPhoto_cin(updatedPatient.getPhoto_cin());
             patient.setTelephone(updatedPatient.getTelephone());
             patient.setEmail(updatedPatient.getEmail());
@@ -65,7 +65,7 @@ public class PatientController {
             patient.setMutuelle(updatedPatient.getMutuelle());
             patient.setCaractere(updatedPatient.getCaractere());
             patient.setId_parent(updatedPatient.getId_parent());
-            patientService.setCodePatient(patient);
+            patientService.setTypePatient(patient);
             patient.updateVerificationStatus();
             PatientEntity updated = patientRepository.save(patient);
             return ResponseEntity.ok().body(updated);

@@ -35,6 +35,9 @@ public class SansRdvEntity implements Serializable {
     @Column(nullable = false)
     private String date;
 
+    @Column(nullable = false)
+    private LocalDateTime created_at = LocalDateTime.now();
+
     @ManyToOne
     @JsonIgnoreProperties("sans_rendezvous")
     @JoinColumn(name = "id_patient")

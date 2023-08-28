@@ -14,14 +14,12 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
-    public void setCodePatient(PatientEntity patientEntity) {
-        if ("provisoire".equalsIgnoreCase(patientEntity.getType_patient())) {
-            patientEntity.setCode_patient(null);
-        } else if ("officiel".equalsIgnoreCase(patientEntity.getType_patient())) {
-            if (patientEntity.getCode_patient() == null) {
-                Integer lastCode = patientRepository.findMaxCodePatient();
-                patientEntity.setCode_patient(lastCode != null ? lastCode + 1 : 1);
-            }
+    public void setTypePatient(PatientEntity patientEntity) {
+        if (patientEntity.getCode_patient() == null || patientEntity.getCode_patient() == 0) {
+            patientEntity.setType_patient("Provisoire");
+        } else {
+            patientEntity.setType_patient("Officiel");
         }
     }
+
 }
