@@ -1,8 +1,10 @@
 package com.example.Gestion_cabinet_backend.controllers;
 
+import com.example.Gestion_cabinet_backend.models.IntervalTempsEntity;
 import com.example.Gestion_cabinet_backend.models.PatientEntity;
 import com.example.Gestion_cabinet_backend.models.RendezvousEntity;
 import com.example.Gestion_cabinet_backend.repository.EventCalendarRepository;
+import com.example.Gestion_cabinet_backend.repository.IntervalTempsRepository;
 import com.example.Gestion_cabinet_backend.repository.PatientRepository;
 import com.example.Gestion_cabinet_backend.repository.RendezvousRepository;
 import com.example.Gestion_cabinet_backend.services.PatientService;
@@ -29,6 +31,9 @@ public class RendezvousController {
     private PatientRepository patientRepository;
     @Autowired
     private PatientService patientService;
+    @Autowired
+    private  IntervalTempsRepository intervalTempsRepository;
+
 
     @GetMapping("/rendezvous")
     public ResponseEntity<List<RendezvousEntity>> getAllRendezvous() {
@@ -113,8 +118,17 @@ public class RendezvousController {
 
     @GetMapping("/rendezvous/date/count/{date}")
     public Integer getCountRendezVous(@PathVariable("date") String date){
+
         List<RendezvousEntity> rendezvousList = rendezvousRepository.findByDate(date);
-        return 22-rendezvousList.size();
+       IntervalTempsEntity intervalExistsResponse = intervalTempsRepository.findByDate(date);
+
+
+        if (intervalExistsResponse != null) {
+            return ((intervalExistsResponse.getEndTime()-intervalExistsResponse.getStartTime())*2) - rendezvousList.size();
+        } else {
+            return 22 - rendezvousList.size();
+        }
+
     }
 
     @GetMapping("/rendezvous/count/{patientId}")

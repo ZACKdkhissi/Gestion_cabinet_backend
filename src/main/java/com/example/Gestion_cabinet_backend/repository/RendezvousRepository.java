@@ -14,12 +14,7 @@ import java.util.List;
 @Repository
 public interface RendezvousRepository extends JpaRepository<RendezvousEntity,Integer> {
     List<RendezvousEntity> findByDate(String date);
-
-
-
-
-
-
+    List<RendezvousEntity> findByDateAndHeureBetween(String date, String startTime, String endTime);
 
 
 
