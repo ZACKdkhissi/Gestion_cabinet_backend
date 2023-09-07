@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,62 +33,10 @@ public class IntervalTempsController {
     private RendezvousRepository rendezvousRepository;
 
     @PostMapping("/intervals")
-    public ResponseEntity<String> createIntervalTemps(@RequestBody IntervalTempsEntity intervalTemps) {
-        try {
-            IntervalTempsEntity existingInterval = intervalTempsRepository.findByDate(intervalTemps.getDate());
-
-            if (existingInterval != null) {
-                return new ResponseEntity<>("Ce jour déja paramétré.", HttpStatus.BAD_REQUEST);
-            }
-
-            List<RendezvousEntity> appointmentsInInterval = rendezvousRepository.findByDate(intervalTemps.getDate());
-
-            if (!appointmentsInInterval.isEmpty()) {
-                return new ResponseEntity<>("Régler les rendez-vous avant de paramétrer.", HttpStatus.BAD_REQUEST);
-            }
-
-            intervalTempsRepository.save(intervalTemps);
-            return new ResponseEntity<>("Ce jour paramétrer avec succès.", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Une erreur est survenue lors de la création de l'intervalle de temps.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> createIntervalTemps(@RequestBody IntervalTempsEntity intervalTemps) {
+            IntervalTempsEntity savedInterval = intervalTempsRepository.save(intervalTemps);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedInterval);
     }
-
-    /*@PostMapping("/intervals")
-    public ResponseEntity<String> createIntervalTemps(@RequestBody IntervalTempsEntity intervalTemps) {
-        try {
-            List<RendezvousEntity> appointmentsInInterval = rendezvousRepository.findByDate(intervalTemps.getDate());
-
-            // Parse the startTime and endTime integers to LocalTime
-            LocalTime startTime = LocalTime.of(intervalTemps.getStartTime(), 0); // Assuming HH format
-            LocalTime endTime = LocalTime.of(intervalTemps.getEndTime(), 0);     // Assuming HH format
-
-            // Vérifier s'il y a des rendez-vous dans l'intervalle
-            boolean hasAppointmentsInInterval = appointmentsInInterval.stream()
-                    .anyMatch(appointment -> isTimeWithinInterval(appointment.getHeure(), startTime, endTime));
-
-            if (hasAppointmentsInInterval) {
-                return new ResponseEntity<>("Il y a des rendez-vous dans cet intervalle. Impossible de paramétrer.", HttpStatus.BAD_REQUEST);
-            }
-
-            intervalTempsRepository.save(intervalTemps);
-            return new ResponseEntity<>("Cet intervalle a été paramétré avec succès.", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Une erreur est survenue lors de la création de l'intervalle de temps.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Fonction pour vérifier si une heure est dans un certain intervalle
-    private boolean isTimeWithinInterval(String time, LocalTime intervalStartTime, LocalTime intervalEndTime) {
-        try {
-            LocalTime appointmentTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm")); // Assuming HH:mm format
-
-            return !appointmentTime.isBefore(intervalStartTime) && !appointmentTime.isAfter(intervalEndTime);
-        } catch (DateTimeParseException e) {
-            return false;
-        }
-    }*/
-
 
     @GetMapping("/intervals")
     public ResponseEntity<List<IntervalTempsEntity>> getAllIntervals() {
@@ -103,6 +52,21 @@ public class IntervalTempsController {
             return ResponseEntity.ok(interval);
         } else {
             return null;
+        }
+    }
+
+    @DeleteMapping("/intervals/{id}")
+    public ResponseEntity<?> deleteIntervalById(@PathVariable("id") Integer intervalId) {
+        try {
+            if (intervalTempsRepository.existsById(intervalId)) {
+                intervalTempsRepository.deleteById(intervalId);
+                return ResponseEntity.ok("Interval deleted successfully");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting interval: " + e.getMessage());
         }
     }
 

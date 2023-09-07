@@ -8,17 +8,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface RendezvousRepository extends JpaRepository<RendezvousEntity,Integer> {
     List<RendezvousEntity> findByDate(String date);
-    List<RendezvousEntity> findByDateAndHeureBetween(String date, String startTime, String endTime);
-
-
-
-
-
 
 }
