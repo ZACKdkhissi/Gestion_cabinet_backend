@@ -33,7 +33,7 @@ import javax.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthenticationController {
 
     @Autowired
