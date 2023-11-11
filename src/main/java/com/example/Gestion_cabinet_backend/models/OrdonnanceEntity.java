@@ -1,8 +1,13 @@
 package com.example.Gestion_cabinet_backend.models;
 
-import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.*;
+
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -11,6 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "ordonnances")
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class OrdonnanceEntity implements Serializable {
@@ -18,22 +24,21 @@ public class OrdonnanceEntity implements Serializable {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Integer ID_ordonnance;
+        private Integer id_ordonnance;
 
-        private String Date;
+        @Column(nullable = false)
+        private String date;
 
-        @OneToOne(mappedBy = "ordonnance",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+        @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @JoinColumn(name = "id_sansrdv")
+        @JsonIgnoreProperties("ordonnance")
+        private SansRdvEntity sansrdv;
+
+        @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @JoinColumn(name = "id_rendezvous")
+        @JsonIgnoreProperties("ordonnance")
         private RendezvousEntity rendezvous;
 
-        @ManyToMany
-        @JoinTable(
-                name = "ordonnance_medicament",
-                joinColumns = @JoinColumn(name = "ID_ordonnance"),
-                inverseJoinColumns = @JoinColumn(name = "ID_medicament")
-        )
-        private List<MedicamentEntity> medicaments;
-
-
-        // Getters and setters
-
+        @OneToMany(mappedBy = "ordonnance", cascade = CascadeType.ALL)
+        private List<OrdonnanceMedicament> ordonnanceMedicaments;
 }
